@@ -1,4 +1,5 @@
-pull request: 
+Database schema design
+pull request: https://github.com/zeravenyoej/node-db2-project/pull/1
 # Node DB 2 Module Challenge
 
 In this challenge, you will write an API that can be used to manage _Cars_ stored in a Relational Database.
