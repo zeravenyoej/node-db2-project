@@ -29,14 +29,52 @@ route.post("/", async (req, res, next) => {
         if (!VIN || !make || !model || !mileage) {
             return res.status(400).json({message: "Need VIN, make, model, and mileage please"})
         }
+        
+        //In order for the put request to work below, I have to make a payload variable instead of 
+        //passing in req.body as a param insert. Apparently this is the only way to generate an ID?
+        //WHY???
+        const payload = {
+            VIN: req.body.VIN, 
+            make: req.body.make, 
+            model: req.body.model,
+            mileage: req.body.mileage
+        }
 
-        const [id] = await db("cars").insert(req.body)
+        const [id] = await db("cars").insert(payload)
         const newCar = await db("cars").where({id: id}).first()
         res.status(201).json(newCar)
     } catch(err) {
         next(err)
     }
 })
+
+route.put("/:id", async (req, res, next) => {
+    try {
+        const payload = {
+            VIN: req.body.VIN, 
+            make: req.body.make, 
+            model: req.body.model,
+            mileage: req.body.mileage
+        }
+        const { id } = req.params
+
+        await db("cars").where({id: id}).update(payload)
+        const updatedCar = await db("cars").where({id: id}).first()
+        res.json(updatedCar)
+    } catch(err) {
+        next(err)
+    }
+})
+
+route.delete("/:id", async (req, res, next) => {
+    try {
+        await db("cars").where({id: req.params.id}).del()
+        res.status(204).json({message: "Successfully deleted"})
+    } catch(err) {
+        next(err)
+    }
+})
+
 
 
 module.exports = route
